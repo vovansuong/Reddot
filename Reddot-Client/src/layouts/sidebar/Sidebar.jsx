@@ -117,7 +117,7 @@ const Sidebar = (props) => {
             <li className="active-pro">
               <NavLink to="login" className="nav-NavLink">
                 <i className="fa-solid fa-right-to-bracket" />
-                <p>Sign in</p>
+                <p>Log in</p>
               </NavLink>
             </li>
           )}
