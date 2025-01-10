@@ -1,0 +1,29 @@
+.social-btn {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 15px;
+  padding: 7px;
+  border-radius: 0.5em;
+  outline: none;
+  border: 1px solid black;
+  background-color: #fff;
+  color: #000;
+
+  &.active {
+    color: #fff;
+  }
+
+  .social-btn[disabled="disabled"],
+  .social-btn:disabled {
+    cursor: not-allowed;
+  }
+
+  img {
+    height: 20px;
+    margin: 10px 20px;
+  }
+}
