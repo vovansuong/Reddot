@@ -1,0 +1,43 @@
+package com.springboot.app.search;
+
+public class QuerySortMeta {
+    private String field;
+    private SortOrder order;
+    private boolean caseSensitiveSort;
+
+    public QuerySortMeta() {
+
+    }
+
+    public QuerySortMeta(String field, SortOrder order, boolean caseSensitiveSort) {
+        this.field = field;
+        this.order = order;
+        this.caseSensitiveSort = caseSensitiveSort;
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public SortOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(SortOrder order) {
+        this.order = order;
+    }
+
+    public boolean isCaseSensitiveSort() {
+        return caseSensitiveSort;
+    }
+
+    public void setCaseSensitiveSort(boolean caseSensitiveSort) {
+        this.caseSensitiveSort = caseSensitiveSort;
+    }
+
+    public enum SortOrder {UNSORTED, ASCENDING, DESCENDING}
+}
