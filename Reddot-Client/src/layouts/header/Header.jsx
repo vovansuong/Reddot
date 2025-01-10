@@ -67,17 +67,6 @@ function Header() {
     setDropdownOpenAccount(!dropdownOpenAccount);
   };
 
-  const getBrand = () => {
-    let brandName = "Reddot";
-    routes.map((prop) => {
-      if (window.location.href.indexOf(prop?.layout + prop?.path) !== -1) {
-        brandName = prop.name;
-      }
-      return null;
-    });
-    return brandName;
-  };
-
   const openSidebar = () => {
     document.documentElement.classList.toggle("nav-open");
     sidebarToggle.current.classList.toggle("toggled");
@@ -114,7 +103,7 @@ function Header() {
   const isShowRouteAdminMod = () => {
     const rolesOfCurrentUser = currentUser?.roles;
     return rolesOfCurrentUser?.map((role) =>
-      [ROLES.ADMIN, ROLES.MOD].includes(role),
+      [ROLES.ADMIN, ROLES.MOD].includes(role)
     );
   };
   function getAvatar() {
@@ -166,7 +155,6 @@ function Header() {
               <span className="navbar-toggler-bar bar3" />
             </button>
           </div>
-          <NavbarBrand href="#">{getBrand()}</NavbarBrand>
         </div>
 
         <SearchFormHeader color={color} />
@@ -241,19 +229,13 @@ function Header() {
             ) : (
               <>
                 <NavItem>
-                  <Link to="/login" className="nav-link btn-rotate">
-                    <i className="fa-solid fa-right-to-bracket fa-xl d-lg-inline-block d-none"></i>
-                    <p>
-                      <span className="d-lg-none d-md-block">Sign in</span>
-                    </p>
+                  <Link to="/login" className="btn btn-primary" style={{ borderRadius: "10px" }}>
+                    Log in
                   </Link>
                 </NavItem>
                 <NavItem>
-                  <Link to="/register" className="nav-link btn-rotate">
-                    <i className="fa-solid fa-user-plus fa-xl d-lg-inline-block d-none"></i>
-                    <p>
-                      <span className="d-lg-none d-md-block">Sign up</span>
-                    </p>
+                  <Link to="/register" className="btn btn-primary" style={{ borderRadius: "10px", marginLeft:"10px" }}>
+                  Register
                   </Link>
                 </NavItem>
               </>

@@ -49,9 +49,11 @@ const FormInput = ({
   };
 
   useEffect(() => {
-    validate(value);
-    showErrMsg();
-  }, [value, validate]);
+    if (errorMsg) {
+      validate(value);
+      showErrMsg();
+    }
+  }, [value, validate, errorMsg]);
 
   return (
     <>
@@ -79,7 +81,9 @@ const FormInput = ({
         role="alert"
         hidden={valid || !focus}
       >
-        <ul>{showErrMsg()}</ul>
+       {!valid && (
+         <ul>{showErrMsg()}</ul>
+       )}
       </small>
     </>
   );
