@@ -15,6 +15,7 @@ const LoginForm = () => {
   const dispatch = useDispatch();
 
   const errRef = useRef();
+  const [showErrors, setShowErrors] = useState(false);
 
   const [username, setUsername] = useState("");
   const [validName, setValidName] = useState(false);
@@ -40,23 +41,35 @@ const LoginForm = () => {
   }, [password]);
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Now nothing will happen
-
+    e.preventDefault();
+  
+    setShowErrors(true); // Bật trạng thái hiển thị lỗi khi người dùng nhấn login
+  
+    // Kiểm tra nếu không hợp lệ thì dừng lại
     if (!username || !password) {
-      errRef.current.focus();
+      // errRef.current.focus();
       return toast.error("Please enter email and password");
     }
-    if (!validateNameOrEmail(username) || !validatePassword(password)) {
-      errRef.current.focus();
+    if (!validName || !validPwd) {
+      // errRef.current.focus();
       return toast.error("Please enter valid information");
     }
-
+  
+    // Nếu hợp lệ, tiến hành đăng nhập
     const loginInfo = {
       username: username.trim(),
       password: password,
     };
     loginUser(loginInfo, dispatch);
   };
+  
+  useEffect(() => {
+    // Bật trạng thái hiển thị lỗi mỗi khi người dùng nhập liệu
+    setValidName(validateNameOrEmail(username));
+    setValidPwd(validatePassword(password));
+  }, [username, password]);
+  
+  
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13) {
@@ -101,29 +114,29 @@ const LoginForm = () => {
           id="username"
           type="text"
           value={username}
-          valid={validName}
+          valid={!showErrors || validName} // Không hiển thị lỗi nếu showErrors = false
           focus={userFocus}
           setFocus={setUserFocus}
           setValue={setUsername}
           validate={validateNameOrEmail}
-          placeholder="Username or Email (*)"
+          placeholder="Username or Email"
           errorMsg="Username must be 5-24 characters long and start with a letter. Letters, numbers, underscores, hyphens allowed. Or email must be format valid."
         />
         <div className="input-password">
-          <FormInput
-            id="password"
-            type={isShowPassword ? "text" : "password"}
-            value={password}
-            valid={validPwd}
-            focus={pwdFocus}
-            setFocus={setPwdFocus}
-            setValue={setPassword}
-            validate={validatePassword}
-            placeholder="Password (*)"
-            errorMsg="Password is not valid"
-            handleKeyDown={handleKeyDown}
-          />
-          <button
+        <FormInput
+          id="password"
+          type={isShowPassword ? "text" : "password"}
+          value={password}
+          valid={!showErrors || validPwd} // Không hiển thị lỗi nếu showErrors = false
+          focus={pwdFocus}
+          setFocus={setPwdFocus}
+          setValue={setPassword}
+          validate={validatePassword}
+          placeholder="Password"
+          errorMsg="Password is not valid"
+          handleKeyDown={handleKeyDown}
+        />
+         <button
             className={
               isShowPassword
                 ? "fa-solid fa-eye eye-login"
@@ -156,7 +169,7 @@ const LoginForm = () => {
       <div>
         <p className="login-subtitle">
           Do not have an account?
-          <Link to="/register"> Sign Up</Link>
+          <Link to="/register"> Register</Link>
         </p>
       </div>
 

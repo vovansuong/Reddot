@@ -6,6 +6,7 @@ import _ from "lodash";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import "./searchHeader.scss";
+import { FaSearch } from "react-icons/fa";
 
 //Services
 import {
@@ -147,11 +148,12 @@ const SearchFormHeader = () => {
         <InputGroup className="no-border">
           <Input
             placeholder="Search..."
-            className="text-lg rounded-full border-2 border-gray-500 focus:border-gray-900 transition"
+            className="w-full px-4 py-2 text-lg rounded-full border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-300 transition-all duration-300 ease-in-out flex items-center"
             name="search"
             value={defaultValue}
             onChange={handleChange}
             onSelect={() => setShowListSearch(true)}
+            prefix={<FaSearch className="text-gray-500 mr-3" />} // Thêm biểu tượng tìm kiếm ở bên trái
           />
           <InputGroupAddon addonType="append">
             <InputGroupText className="" onClick={() => handleSearch(keyword)}>

@@ -74,7 +74,7 @@ const Home = () => {
       <Col md="12">
         <Row>
           <Col md="8">
-            <Card style={{ backgroundColor: "#A8E6CF" }}>
+            <Card>
               <CardHeader>
                 <h4 className="stat-name">
                   <i className="fa-regular fa-clock"></i> Most Recent
@@ -116,7 +116,7 @@ const Home = () => {
               </CardFooter>
             </Card>
 
-            <Card style={{ backgroundColor: "#D5F5E3" }}>
+            <Card>
               <CardHeader>
                 <h4 className="stat-name">
                   <i className="fa-regular fa-eye"></i> Most Views Discussions
@@ -155,7 +155,7 @@ const Home = () => {
               </CardFooter>
             </Card>
 
-            <Card style={{ backgroundColor: "#FFF3E0" }}>
+            <Card>
               <CardHeader>
                 <h4 className="stat-name">
                   <i className="fa-regular fa-comments"></i> Most Comments
