@@ -14,7 +14,6 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const errRef = useRef();
   const [showErrors, setShowErrors] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -42,9 +41,9 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     setShowErrors(true); // Bật trạng thái hiển thị lỗi khi người dùng nhấn login
-
+  
     // Kiểm tra nếu không hợp lệ thì dừng lại
     if (!username || !password) {
       // errRef.current.focus();
@@ -54,7 +53,7 @@ const LoginForm = () => {
       // errRef.current.focus();
       return toast.error("Please enter valid information");
     }
-
+  
     // Nếu hợp lệ, tiến hành đăng nhập
     const loginInfo = {
       username: username.trim(),
@@ -62,12 +61,14 @@ const LoginForm = () => {
     };
     loginUser(loginInfo, dispatch);
   };
-
+  
   useEffect(() => {
     // Bật trạng thái hiển thị lỗi mỗi khi người dùng nhập liệu
     setValidName(validateNameOrEmail(username));
     setValidPwd(validatePassword(password));
   }, [username, password]);
+  
+  
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13) {
@@ -97,12 +98,9 @@ const LoginForm = () => {
   useEffect(() => {
     if (location.state?.error) {
       toast.error(location.state.error);
-      history.replace({
-        pathname: location.pathname,
-        state: {},
-      });
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location]);
+  }, [location, navigate]);
 
   return (
     <article className="auth-container content container mt-3 col-12 col-sm-8 col-lg-4 mx-auto">
@@ -121,20 +119,20 @@ const LoginForm = () => {
           errorMsg="Username must be 5-24 characters long and start with a letter. Letters, numbers, underscores, hyphens allowed. Or email must be format valid."
         />
         <div className="input-password">
-          <FormInput
-            id="password"
-            type={isShowPassword ? "text" : "password"}
-            value={password}
-            valid={!showErrors || validPwd} // Không hiển thị lỗi nếu showErrors = false
-            focus={pwdFocus}
-            setFocus={setPwdFocus}
-            setValue={setPassword}
-            validate={validatePassword}
-            placeholder="Password"
-            errorMsg="Password is not valid"
-            handleKeyDown={handleKeyDown}
-          />
-          <button
+        <FormInput
+          id="password"
+          type={isShowPassword ? "text" : "password"}
+          value={password}
+          valid={!showErrors || validPwd} // Không hiển thị lỗi nếu showErrors = false
+          focus={pwdFocus}
+          setFocus={setPwdFocus}
+          setValue={setPassword}
+          validate={validatePassword}
+          placeholder="Password"
+          errorMsg="Password is not valid"
+          handleKeyDown={handleKeyDown}
+        />
+         <button
             className={
               isShowPassword
                 ? "fa-solid fa-eye eye-login"
