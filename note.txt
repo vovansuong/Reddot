@@ -1,0 +1,2 @@
+Reset Pass: system send link -> user click -> st gen new pass and send mail/ code -> user click
+Edit mail send

@@ -14,7 +14,6 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const errRef = useRef();
   const [showErrors, setShowErrors] = useState(false);
 
   const [username, setUsername] = useState("");
@@ -99,12 +98,9 @@ const LoginForm = () => {
   useEffect(() => {
     if (location.state?.error) {
       toast.error(location.state.error);
-      history.replace({
-        pathname: location.pathname,
-        state: {},
-      });
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location]);
+  }, [location, navigate]);
 
   return (
     <article className="auth-container content container mt-3 col-12 col-sm-8 col-lg-4 mx-auto">

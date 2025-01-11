@@ -10,7 +10,6 @@ import { fetchImage } from "../../services/userService/UserService";
 import {
   Collapse,
   Navbar,
-  NavbarBrand,
   Nav,
   NavItem,
   Dropdown,
@@ -23,7 +22,6 @@ import {
 import avatar from "../../assets/img/default-avatar.png";
 import Avatar from "../../components/avatar/Avatar";
 
-import routes from "../../routes/routesForAdmin";
 import SearchFormHeader from "../../components/search/SearchFormHeader";
 import { ROLES } from "../../constants";
 function Header() {
@@ -103,7 +101,7 @@ function Header() {
   const isShowRouteAdminMod = () => {
     const rolesOfCurrentUser = currentUser?.roles;
     return rolesOfCurrentUser?.map((role) =>
-      [ROLES.ADMIN, ROLES.MOD].includes(role)
+      [ROLES.ADMIN, ROLES.MOD].includes(role),
     );
   };
   function getAvatar() {
@@ -229,13 +227,21 @@ function Header() {
             ) : (
               <>
                 <NavItem>
-                  <Link to="/login" className="btn btn-primary" style={{ borderRadius: "10px" }}>
+                  <Link
+                    to="/login"
+                    className="btn btn-primary"
+                    style={{ borderRadius: "10px" }}
+                  >
                     Log in
                   </Link>
                 </NavItem>
                 <NavItem>
-                  <Link to="/register" className="btn btn-primary" style={{ borderRadius: "10px", marginLeft:"10px" }}>
-                  Register
+                  <Link
+                    to="/register"
+                    className="btn btn-primary"
+                    style={{ borderRadius: "10px", marginLeft: "10px" }}
+                  >
+                    Register
                   </Link>
                 </NavItem>
               </>
