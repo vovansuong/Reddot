@@ -6,12 +6,12 @@ import com.springboot.app.accounts.entity.User;
 import com.springboot.app.dto.response.PaginateResponse;
 import com.springboot.app.dto.response.ServiceResponse;
 import com.springboot.app.security.dto.request.SignupRequest;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Component
 public interface UserService {
 
     Optional<User> findById(Long id);

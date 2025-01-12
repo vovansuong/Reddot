@@ -11,9 +11,10 @@ import com.springboot.app.accounts.repository.UserRepository;
 import com.springboot.app.security.exception.OAuth2AuthenticationProcessingException;
 import com.springboot.app.security.oauth2.user.OAuth2UserInfo;
 import com.springboot.app.security.oauth2.user.OAuth2UserInfoFactory;
+import com.springboot.app.security.service.GitHubService;
 import com.springboot.app.security.service.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,29 +23,29 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final PasswordEncoder encoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final GitHubService gitHubService;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    @Lazy
-    private PasswordEncoder encoder;
+    private static boolean isProviderEquals(OAuth2UserRequest oAuth2UserRequest, String provider) {
+        return oAuth2UserRequest.getClientRegistration().getRegistrationId().equals(provider);
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
-
         try {
             return processOAuth2User(oAuth2UserRequest, oAuth2User);
         } catch (AuthenticationException ex) {
@@ -57,11 +58,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
-        if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
-            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
+        String email;
+        if (oAuth2UserInfo.getEmail() == null && isProviderEquals(oAuth2UserRequest, "github")) {
+            // call GitHubService to get emails
+            List<GitHubService.GitHubEmail> primaryEmailObject = gitHubService.fetchEmails(oAuth2UserRequest.getAccessToken().getTokenValue(), true);
+            email = primaryEmailObject.getFirst().getEmail();
+        } else if (oAuth2UserInfo.getEmail() != null) {
+            email = oAuth2UserInfo.getEmail();
+        } else {
+            throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider or you do not set email visibility to public.");
         }
-
-        Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
+        Optional<User> userOptional = userRepository.findByEmail(email);
         User user;
         if (userOptional.isPresent()) {
             user = userOptional.get();
@@ -74,13 +81,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
-
         return UserDetailsImpl.create(user, oAuth2User.getAttributes());
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User();
-        user.setUsername(oAuth2UserInfo.getEmail()); // Set a default username
+        user.setUsername(createUsername()); // Set a default username
         user.setPassword(encoder.encode("user" + (int) (Math.random() * 10000))); // Set a default password
         // Encode the password before saving it in the database
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));

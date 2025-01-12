@@ -135,6 +135,7 @@ public class EmailSender {
         private String defaultEncoding;
         private Boolean authentication;
         private Boolean tlsEnabled;
+
         private Builder() {
             this.emailSender = new EmailSender();
         }

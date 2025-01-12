@@ -58,16 +58,16 @@ export const logOut = async (dispatch, id, navigate, accessToken, axiosJWT) => {
       headers: { Authorization: `Bearer ${accessToken}` },
       withCredentials: true,
     });
-    dispatch(logOutSuccess());
-    dispatch(clearUserList());
-    dispatch(clearAvatar());
-    navigate("/login");
     toast.success("Logout Successfully!");
   } catch (err) {
-    console.log(`Logout error: ${err.message}`);
-    toast.error("Log out failed!");
+    console.log(`Something went wrong: ${err.message}`);
+    toast.error("Something went wrong trying to logout!");
     dispatch(logOutFailed());
     navigate("/login");
+  } finally {
+    dispatch(logOutSuccess());
+    dispatch(clearAvatar());
+    dispatch(clearUserList());
   }
 };
 
