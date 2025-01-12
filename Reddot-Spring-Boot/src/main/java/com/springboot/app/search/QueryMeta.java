@@ -14,6 +14,7 @@ public class QueryMeta<E> {
     private Integer maxResult;
     private List<QuerySortMeta> sorts;
     private Map<String, List<QueryFilterMeta>> filters;
+
     private QueryMeta(Class<E> targetEntityClass) {
         this.targetEntityClass = targetEntityClass;
     }
