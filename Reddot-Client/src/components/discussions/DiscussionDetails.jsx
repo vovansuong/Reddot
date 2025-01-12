@@ -179,7 +179,7 @@ const DiscussionDetails = () => {
         commentAdd,
         null,
         currentUser?.accessToken,
-        axiosJWT,
+        axiosJWT
       );
       if (+res?.data?.status === 407) {
         toast.error(res?.data?.message);
@@ -283,7 +283,7 @@ const DiscussionDetails = () => {
     let res = await registerBookmark(
       bookmarkData,
       currentUser?.accessToken,
-      axiosJWT,
+      axiosJWT
     );
     if (res && +res.data.status === 200) {
       toast.success(res.data.message);
@@ -309,7 +309,7 @@ const DiscussionDetails = () => {
   const handleUpdateAddReply = (reply) => {
     let cloneComments = _.cloneDeep(comments);
     let index = cloneComments.findIndex(
-      (comment) => comment.commentId === reply.commentId,
+      (comment) => comment.commentId === reply.commentId
     );
     cloneComments[index] = {
       ...cloneComments[index],
@@ -390,7 +390,7 @@ const DiscussionDetails = () => {
     try {
       const res = await getAllBannedKeywords(
         currentUser?.accessToken,
-        axiosJWT,
+        axiosJWT
       );
       if (res && res.data) {
         setList(res.data);
@@ -509,10 +509,14 @@ const DiscussionDetails = () => {
           </div>
           <hr />
           <div className="card-body">
-            <div
-              className="contentByDiscussion"
-              dangerouslySetInnerHTML={{ __html: comment?.content }}
-            ></div>
+            <div>
+              <h3>{comment?.title}</h3>
+              <div
+                className="contentByDiscussion"
+                dangerouslySetInnerHTML={{ __html: comment?.content }}
+              ></div>
+            </div>
+
             {comment?.tags?.map((tag) => (
               <span key={tag.id}>
                 <button
@@ -557,11 +561,6 @@ const DiscussionDetails = () => {
                 <i className="fa-solid fa-reply"></i>Reply
               </button>
             </span>
-            <span>
-              <button>
-                <i className="fa-regular fa-flag"></i>Report
-              </button>
-            </span>
 
             <span>
               <small>
@@ -601,7 +600,7 @@ const DiscussionDetails = () => {
                     <section className="card mb-3 p-3" key={item.commentId}>
                       {commentCard(item)}
                     </section>
-                  ),
+                  )
               )}{" "}
               {isShowAddNewComment && (
                 <section className="card mb-3 p-3">

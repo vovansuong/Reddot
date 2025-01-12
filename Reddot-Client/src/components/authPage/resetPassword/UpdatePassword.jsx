@@ -80,8 +80,7 @@ const UpdatePassword = () => {
 
   return (
     <article className="auth-container container mt-3 col-12 col-sm-8 col-lg-4 mx-auto">
-      <h1 className="login-title">Create an account</h1>
-
+      <h1 className="login-title">Update Password</h1>
       {errMsg && (
         <p
           className="alert alert-danger"

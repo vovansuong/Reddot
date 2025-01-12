@@ -19,7 +19,7 @@ let ps;
 const Layout = (props) => {
   const { route } = props;
 
-  const [backgroundColor, setBackgroundColor] = React.useState("black");
+  const [backgroundColor, setBackgroundColor] = React.useState("white");
   const [activeColor, setActiveColor] = React.useState("info");
 
   const mainPanel = React.useRef();
