@@ -2,26 +2,31 @@ package com.springboot.app.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.app.accounts.entity.User;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Setter
+@Getter
 public class UserDetailsImpl implements OAuth2User, UserDetails {
+    @Serial
     private static final long serialVersionUID = 1L;
     private Long id;
     private String username;
     private String email;
+    private Collection<? extends GrantedAuthority> authorities;
     @JsonIgnore
     private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-
     private Map<String, Object> attributes;
 
     public UserDetailsImpl(Long id, String username, String email, String password,
@@ -43,7 +48,8 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                authorities
+        );
     }
 
     public static UserDetailsImpl create(User user, Map<String, Object> attributes) {
@@ -55,14 +61,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     @Override
@@ -103,10 +101,6 @@ public class UserDetailsImpl implements OAuth2User, UserDetails {
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
-    }
-
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
     }
 
     @Override

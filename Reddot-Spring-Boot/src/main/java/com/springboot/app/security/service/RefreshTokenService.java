@@ -30,14 +30,13 @@ public class RefreshTokenService {
     @Value("${springboot.app.jwtRefreshExpirationMs}")
     private Long refreshTokenDurationMs;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+    }
 
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
@@ -92,12 +91,12 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public int deleteByUserId(Long userId) {
+    public void deleteByUserId(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            return 0;
+            return;
         }
-        return refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.deleteByUser(user);
     }
 
     @Transactional
@@ -116,26 +115,6 @@ public class RefreshTokenService {
         }
         refreshTokenRepository.delete(refreshToken);
         return response;
-    }
-
-    public ServiceResponse<Void> updateAvailableByToken(String token, boolean available) {
-        ServiceResponse<Void> response = new ServiceResponse<>();
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token).orElse(null);
-        if (refreshToken == null) {
-            response.setAckCode(AckCodeType.FAILURE);
-            return response;
-        }
-        refreshToken.setAvailable(available);
-        refreshTokenRepository.save(refreshToken);
-        return response;
-    }
-
-    public User getUserByRefreshToken(String token) {
-        return refreshTokenRepository.findByToken(token)
-                .map(RefreshToken::getUser)
-                .orElseThrow(() -> new TokenRefreshException(
-                        token,
-                        "Refresh token was expired. Please make a new signin request"));
     }
 
 }

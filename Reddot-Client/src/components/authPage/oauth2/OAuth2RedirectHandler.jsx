@@ -1,26 +1,22 @@
 import { useEffect } from "react";
-// import { ACCESS_TOKEN } from '../../../constants';
 import { useLocation, Navigate } from "react-router-dom";
 import { getCurrentUser } from "../../../redux/apiRequest";
 import { useDispatch } from "react-redux";
 
 function OAuth2RedirectHandler() {
-  const location = useLocation();
-
+  const searchQueryString = useLocation().search;
+  console.info("OAuth2RedirectHandler location: ", searchQueryString);
   const dispatch = useDispatch();
 
   function getUrlParameter(name) {
-    name = name.replace("[", "\\[").replace("]", "\\]");
-    const regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-
-    let results = regex.exec(location.search);
-    // console.log(`Check results`, results);
-    return results === null
-      ? ""
-      : decodeURIComponent(results[1].replace(/\+/g, " "));
+    const urlParams = new URLSearchParams(searchQueryString);
+    let results = urlParams.get(name);
+    console.log(`Check results: ${results}`);
+    return results;
   }
 
-  const token = getUrlParameter("token"); //access token
+  const token = getUrlParameter("token");
+
   const error = getUrlParameter("error");
 
   useEffect(() => {
@@ -31,10 +27,10 @@ function OAuth2RedirectHandler() {
 
   let navigateTo;
   if (token) {
-    navigateTo = <Navigate to="/" state={{ from: location }} replace />;
+    navigateTo = <Navigate to="/" state={{ from: searchQueryString }} replace />;
   } else {
     navigateTo = (
-      <Navigate to="/login" state={{ from: location, error: error }} replace />
+      <Navigate to="/login" state={{ from: searchQueryString, error: error }} replace />
     );
   }
   return navigateTo;

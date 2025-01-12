@@ -3,9 +3,9 @@ package com.springboot.app.accounts.service;
 import com.springboot.app.accounts.dto.request.AvatarOptionRequest;
 import com.springboot.app.accounts.entity.AvatarOption;
 import com.springboot.app.dto.response.ServiceResponse;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public interface AvatarOptionService {
     AvatarOption getAvatarOption();
 

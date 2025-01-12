@@ -14,6 +14,7 @@ public class QuerySpec<E> {
     private Integer maxResult;
     private String sortField;
     private Boolean sortDesc;
+
     // make constructor private to prevent instantiation from outside
     private QuerySpec(Class<E> targetEntityClass) {
         this.targetEntityClass = targetEntityClass;

@@ -7,10 +7,9 @@ import com.springboot.app.security.oauth2.CustomOAuth2UserService;
 import com.springboot.app.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.springboot.app.security.oauth2.OAuth2AuthenticationFailureHandler;
 import com.springboot.app.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import com.springboot.app.security.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +17,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,23 +27,20 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final UserDetailsService userDetailsService;
+    private final AuthEntryPointJwt unauthorizedHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    @Autowired
-    private CustomOAuth2UserService customOAuth2UserService;
-
-    @Autowired
-    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
-
-    @Autowired
-    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
-
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    public WebSecurityConfig(@Lazy UserDetailsService userDetailsService, AuthEntryPointJwt unauthorizedHandler, @Lazy CustomOAuth2UserService customOAuth2UserService, OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler, OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
+    }
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -87,8 +84,13 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/user-stat/**", "/api/view/**").permitAll()
                                 .requestMatchers("/api/mobiles/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
-                                .requestMatchers("/swagger-ui/**", "/v3/**").permitAll()
+                                // OpenAPI endpoints
+                                .requestMatchers("/v3/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessUrl("/").deleteCookies("JSESSIONID", "SESSION", "jwt-refresh")
                 );
 
         http.authenticationProvider(authenticationProvider());
