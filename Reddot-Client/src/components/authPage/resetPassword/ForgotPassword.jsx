@@ -53,7 +53,7 @@ const ForgotPassword = () => {
 
       {success && (
         <div className="alert alert-success">
-          Register successfully. Redirecting to login page...
+         Password reset link sent to your email!
         </div>
       )}
       {errMsg && <div className="alert alert-danger">{errMsg}</div>}

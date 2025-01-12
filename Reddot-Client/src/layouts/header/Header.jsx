@@ -99,8 +99,8 @@ function Header() {
     }
   }
   const isShowRouteAdminMod = () => {
-    const rolesOfCurrentUser = currentUser?.roles;
-    return rolesOfCurrentUser?.map((role) =>
+    const rolesOfCurrentUser = currentUser?.roles || [];
+    return rolesOfCurrentUser?.some((role) =>
       [ROLES.ADMIN, ROLES.MOD].includes(role),
     );
   };

@@ -68,7 +68,7 @@ const Sidebar = (props) => {
 
   return (
     <div
-      className={"sidebar " + bgColor}
+      className={"sidebar white "}
       data-color={bgColor}
       data-active-color={activeColor}
     >
