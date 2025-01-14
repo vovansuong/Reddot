@@ -40,7 +40,7 @@ export const registerUser = async (user, dispatch, navigate) => {
     if (+res?.status === 201) {
       dispatch(registerSuccess());
       navigate("/login");
-      toast.success("Register successfully!");
+      toast.success("Register successfully! Please check your email to confirm account registration.");
     } else if (+res?.data?.status === 400) {
       toast.error(res?.data?.message);
       dispatch(registerFailed());

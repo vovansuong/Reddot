@@ -1,4 +1,4 @@
-package com.springboot.app.emails.dto.response;
+package com.springboot.app.email.dto.response;
 
 public class DataEmailResponse {
     private String username;

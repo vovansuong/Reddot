@@ -2,22 +2,18 @@ package com.springboot.app.forums.entity;
 
 import com.springboot.app.model.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "comment_votes")
 public class CommentVote extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "vote_up_count")
     private int voteUpCount;
 

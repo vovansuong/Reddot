@@ -74,7 +74,7 @@ public class AuthController {
             String errorMessage = String.join(", ", response.getMessages());
             return ResponseEntity.badRequest().body(new ObjectResponse("400", "User not created. " + errorMessage, null));
         }
-        return ResponseEntity.ok(new ObjectResponse("201", "User created", response.getDataObject()));
+        return ResponseEntity.ok(new ObjectResponse("201", "Please check your email box to confirm account registration.", response.getDataObject()));
     }
 
     @PostMapping("/signin")

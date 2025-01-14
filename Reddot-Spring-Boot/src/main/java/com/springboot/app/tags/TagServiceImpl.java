@@ -1,5 +1,6 @@
 package com.springboot.app.tags;
 
+import com.springboot.app.dto.response.AckCodeType;
 import com.springboot.app.dto.response.PaginateResponse;
 import com.springboot.app.dto.response.ServiceResponse;
 import com.springboot.app.forums.service.SystemInfoService;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -28,7 +28,6 @@ public class TagServiceImpl implements TagService {
     private DiscussionDAO discussionDAO;
 
     @Override
-    @Transactional(readOnly = true)
     public PaginateResponse getAllTags(int pageNo, int pageSize, String orderBy, String sortDir, String keyword) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(orderBy).ascending()
                 : Sort.by(orderBy).descending();
@@ -43,9 +42,14 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(readOnly = false)
     public ServiceResponse<Tag> createNewTag(Tag newTag) {
         ServiceResponse<Tag> response = new ServiceResponse<>();
+
+        if (tagRepository.existsByLabel(newTag.getLabel())) {
+            response.setAckCode(AckCodeType.FAILURE);
+            response.addMessage("Tag with the same label already exists.");
+            return response;
+        }
 
         Integer maxSortOrder = tagRepository.findTopSortOrder();
         if (maxSortOrder == null) {
@@ -63,7 +67,6 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(readOnly = false)
     public ServiceResponse<Tag> updateTag(Tag tagToUpdate) {
         ServiceResponse<Tag> response = new ServiceResponse<>();
         tagRepository.save(tagToUpdate);
@@ -72,7 +75,6 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Transactional(readOnly = false)
     public ServiceResponse<Void> deleteTag(Tag tagToDelete) {
         ServiceResponse<Void> response = new ServiceResponse<>();
 

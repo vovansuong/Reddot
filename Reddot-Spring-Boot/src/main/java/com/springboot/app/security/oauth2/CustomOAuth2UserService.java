@@ -1,13 +1,11 @@
 package com.springboot.app.security.oauth2;
 
-import com.springboot.app.accounts.entity.Person;
 import com.springboot.app.accounts.entity.User;
-import com.springboot.app.accounts.entity.UserStat;
 import com.springboot.app.accounts.enumeration.AccountStatus;
 import com.springboot.app.accounts.enumeration.AuthProvider;
-import com.springboot.app.accounts.enumeration.RoleName;
 import com.springboot.app.accounts.repository.RoleRepository;
 import com.springboot.app.accounts.repository.UserRepository;
+import com.springboot.app.accounts.service.UserService;
 import com.springboot.app.security.exception.OAuth2AuthenticationProcessingException;
 import com.springboot.app.security.oauth2.user.OAuth2UserInfo;
 import com.springboot.app.security.oauth2.user.OAuth2UserInfoFactory;
@@ -24,10 +22,10 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -38,6 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final GitHubService gitHubService;
+    private final UserService userService;
 
     private static boolean isProviderEquals(OAuth2UserRequest oAuth2UserRequest, String provider) {
         return oAuth2UserRequest.getClientRegistration().getRegistrationId().equals(provider);
@@ -61,15 +60,22 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email;
         if (oAuth2UserInfo.getEmail() == null && isProviderEquals(oAuth2UserRequest, "github")) {
             // call GitHubService to get emails
-            List<GitHubService.GitHubEmail> primaryEmailObject = gitHubService.fetchEmails(oAuth2UserRequest.getAccessToken().getTokenValue(), true);
-            email = primaryEmailObject.getFirst().getEmail();
+            CompletableFuture<List<GitHubService.GitHubEmail>> futureEmails = CompletableFuture.supplyAsync(() ->
+                    gitHubService.fetchEmails(oAuth2UserRequest.getAccessToken().getTokenValue(), true)
+            );
+            try {
+                List<GitHubService.GitHubEmail> primaryEmailObject = futureEmails.get();
+                email = primaryEmailObject.getFirst().getEmail();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new OAuth2AuthenticationProcessingException("Failed to get email from GitHub");
+            }
         } else if (oAuth2UserInfo.getEmail() != null) {
             email = oAuth2UserInfo.getEmail();
         } else {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider or you do not set email visibility to public.");
         }
         Optional<User> userOptional = userRepository.findByEmail(email);
-        User user;
+        User user = new User();
         if (userOptional.isPresent()) {
             user = userOptional.get();
             if (!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
@@ -79,39 +85,20 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             }
             user = updateExistingUser(user, oAuth2UserInfo);
         } else {
-            user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+            user.setUsername(createUsername());
+            user.setEmail(email);
+            user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
+            user.setProviderId(oAuth2UserInfo.getId());
+            user.setName(oAuth2UserInfo.getName());
+            user.setImageUrl(oAuth2UserInfo.getImageUrl());
+            user.setAccountStatus(AccountStatus.ACTIVE);
+            user.setCreatedBy(user.getUsername());
+            boolean result = userService.createOAuthUser(user);
+            if (!result) {
+                throw new OAuth2AuthenticationProcessingException("Failed to create user");
+            }
         }
         return UserDetailsImpl.create(user, oAuth2User.getAttributes());
-    }
-
-    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        User user = new User();
-        user.setUsername(createUsername()); // Set a default username
-        user.setPassword(encoder.encode("user" + (int) (Math.random() * 10000))); // Set a default password
-        // Encode the password before saving it in the database
-        user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-        user.setProviderId(oAuth2UserInfo.getId());
-        user.setName(oAuth2UserInfo.getName());
-        user.setEmail(oAuth2UserInfo.getEmail());
-        user.setImageUrl(oAuth2UserInfo.getImageUrl());
-        user.setAccountStatus(AccountStatus.ACTIVE);
-
-        user.setCreatedBy(user.getUsername());
-
-        Person person = new Person();
-        person.setCreatedBy(user.getUsername());
-        user.setPerson(person);
-
-        UserStat userStat = new UserStat();
-        userStat.setCreatedBy(user.getUsername());
-        user.setStat(userStat);
-
-        // Assign the user role by default
-        // if the user does not specify the role during registration process
-        // or if the user is registered using OAuth2 provider
-        roleRepository.findByName(RoleName.ROLE_USER).ifPresent(role -> user.setRoles(new HashSet<>(Set.of(role))));
-
-        return userRepository.save(user);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
@@ -131,5 +118,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
         return username;
     }
-
 }

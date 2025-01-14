@@ -3,22 +3,18 @@ package com.springboot.app.accounts.entity;
 import com.springboot.app.accounts.enumeration.Gender;
 import com.springboot.app.model.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "person")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Person extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "first_name", length = 100)
     private String firstName;
     @Column(name = "last_name", length = 100)
@@ -37,18 +33,4 @@ public class Person extends BaseEntity {
     @Column(name = "profile_banner", length = 255)
     @Lob
     private byte[] profileBanner;
-
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setCreatedAt(now);
-        this.setUpdatedAt(now);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setUpdatedAt(now);
-    }
-
 }

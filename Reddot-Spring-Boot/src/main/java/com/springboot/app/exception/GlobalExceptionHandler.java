@@ -1,6 +1,5 @@
 package com.springboot.app.exception;
 
-import com.springboot.app.security.exception.ResourceNotFoundException;
 import com.springboot.app.security.exception.TokenRefreshException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Date;
 
 @RestControllerAdvice
-public class ControllerExceptionHandler {
+public class GlobalExceptionHandler {
 
     /**
      * Handle TokenRefreshException

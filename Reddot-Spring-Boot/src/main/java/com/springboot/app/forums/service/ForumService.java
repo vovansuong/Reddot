@@ -8,9 +8,11 @@ import com.springboot.app.forums.dto.search.SearchAll;
 import com.springboot.app.forums.entity.Forum;
 import com.springboot.app.forums.entity.ForumGroup;
 import com.springboot.app.forums.entity.ForumStat;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public interface ForumService {
     ServiceResponse<ForumGroup> addForumGroup(ForumGroup newForumGroup, String roleName);
 

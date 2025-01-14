@@ -1,4 +1,4 @@
-package com.springboot.app.emails.dto.request;
+package com.springboot.app.email.dto.request;
 
 
 public class EmailDataRequest {

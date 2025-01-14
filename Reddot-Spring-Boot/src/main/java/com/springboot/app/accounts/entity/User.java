@@ -1,7 +1,6 @@
 package com.springboot.app.accounts.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.springboot.app.accounts.dto.responce.AccountInfoResponse;
 import com.springboot.app.accounts.dto.responce.UserStatResponse;
 import com.springboot.app.accounts.enumeration.AccountStatus;
 import com.springboot.app.accounts.enumeration.AuthProvider;
@@ -10,12 +9,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,18 +27,15 @@ import java.util.stream.Collectors;
                 "email"
         })
 })
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class User extends BaseEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     @OrderBy("name ASC")
     Set<Role> roles = new HashSet<>();
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @NotBlank
     @Size(min = 3, max = 50)
     private String username;
@@ -76,58 +71,12 @@ public class User extends BaseEntity {
     @Column(name = "email_verified")
     private Boolean emailVerified = false;
 
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.accountStatus = AccountStatus.ACTIVE;
-    }
-
     public User(String username, String email, String password, AuthProvider provider) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.provider = provider;
         this.accountStatus = AccountStatus.ACTIVE;
-    }
-
-    public User(String username, String email, String password, AccountStatus accountStatus) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.accountStatus = accountStatus;
-    }
-
-    public User(String username, String email, AccountStatus accountStatus) {
-        this.username = username;
-        this.email = email;
-        this.accountStatus = accountStatus;
-    }
-
-    public User(Long id, String username, String email, String password, String avatar, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.avatar = avatar;
-        this.roles = roles;
-    }
-
-    public static AccountInfoResponse toAccountInfoResponse(User user) {
-        AccountInfoResponse accountInfoResponse = new AccountInfoResponse();
-        accountInfoResponse.setId(user.getId());
-        accountInfoResponse.setUsername(user.getUsername());
-        accountInfoResponse.setEmail(user.getEmail());
-        accountInfoResponse.setPerson(user.getPerson());
-        accountInfoResponse.setUserStat(user.getStat());
-        accountInfoResponse.setName(user.getName());
-        accountInfoResponse.setImageUrl(user.getImageUrl());
-        accountInfoResponse.setAvatar(user.getAvatar());
-
-        accountInfoResponse.setStatus(user.getAccountStatus().name());
-        Set<String> roles = user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet());
-        accountInfoResponse.setRoles(roles);
-        return accountInfoResponse;
     }
 
     public static UserStatResponse toUserStatResponse(User user) {
@@ -147,26 +96,4 @@ public class User extends BaseEntity {
 
         return userStatResponse;
     }
-
-    @PrePersist
-    public void prePersist() {
-        lowerCaseEmail();
-        LocalDateTime now = LocalDateTime.now();
-        this.setCreatedAt(now);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        lowerCaseEmail();
-        LocalDateTime now = LocalDateTime.now();
-        this.setUpdatedAt(now);
-    }
-
-    private void lowerCaseEmail() {
-        if (this.email != null) {
-            this.email = this.email.toLowerCase();
-        }
-    }
-
-
 }

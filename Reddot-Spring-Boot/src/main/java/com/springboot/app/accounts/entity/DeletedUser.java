@@ -4,20 +4,19 @@ import com.springboot.app.accounts.enumeration.RoleName;
 import com.springboot.app.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "deleted_users")
 @Data
 @NoArgsConstructor
 public class DeletedUser extends BaseEntity {
-    @Id
-    private Long id;
-
     @Column(name = "deleted_at", columnDefinition = "DATETIME")
     private LocalDateTime deletedAt;
 
@@ -42,13 +41,8 @@ public class DeletedUser extends BaseEntity {
     @JoinColumn(name = "user_stat_id", foreignKey = @ForeignKey(name = "fk_del_user_stat"))
     private UserStat stat;
 
-    /*
-     * utility method to copy from User object
-     */
     public static DeletedUser fromUser(User user) {
-
         DeletedUser deletedUser = new DeletedUser();
-
         deletedUser.setId(user.getId());
         deletedUser.setUsername(user.getUsername());
         deletedUser.setEmail(user.getEmail());
@@ -59,13 +53,10 @@ public class DeletedUser extends BaseEntity {
         deletedUser.setCreatedAt(user.getCreatedAt());
         deletedUser.setUpdatedBy(user.getUpdatedBy());
         deletedUser.setUpdatedAt(user.getUpdatedAt());
-
         Set<String> roles = user.getRoles().stream().map(role -> role.getName().name()).collect(Collectors.toSet());
         deletedUser.setRole(RoleName.valueOf(roles.iterator().next()));
-
         LocalDateTime now = LocalDateTime.now();
         deletedUser.setDeletedAt(now);
-
         return deletedUser;
     }
 

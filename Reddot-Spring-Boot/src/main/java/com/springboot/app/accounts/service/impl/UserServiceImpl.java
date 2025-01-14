@@ -7,18 +7,25 @@ import com.springboot.app.accounts.enumeration.AccountStatus;
 import com.springboot.app.accounts.enumeration.AuthProvider;
 import com.springboot.app.accounts.enumeration.RoleName;
 import com.springboot.app.accounts.repository.DeletedUserRepository;
-import com.springboot.app.accounts.repository.PasswordResetRepository;
+import com.springboot.app.accounts.repository.RecoveryTokenRepository;
 import com.springboot.app.accounts.repository.RoleRepository;
 import com.springboot.app.accounts.repository.UserRepository;
 import com.springboot.app.accounts.service.UserService;
 import com.springboot.app.dto.response.AckCodeType;
 import com.springboot.app.dto.response.PaginateResponse;
 import com.springboot.app.dto.response.ServiceResponse;
-import com.springboot.app.emails.service.EmailOptionsService;
+import com.springboot.app.email.entity.EmailContentOption;
+import com.springboot.app.email.entity.EmailOptionType;
+import com.springboot.app.email.repository.EmailContentOptionRepository;
+import com.springboot.app.email.service.EmailOptionService;
 import com.springboot.app.follows.repository.FollowUserRepository;
 import com.springboot.app.security.dto.request.SignupRequest;
 import com.springboot.app.security.service.RefreshTokenService;
+import com.springboot.app.service.email.MailSenderManager;
+import com.springboot.app.utils.ResourceUtil;
 import com.springboot.app.utils.Validators;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
-    private PasswordResetRepository passwordResetRepository;
+    private RecoveryTokenRepository recoveryTokenRepository;
     @Autowired
     private DeletedUserRepository deletedUserRepository;
     @Autowired
@@ -54,7 +61,11 @@ public class UserServiceImpl implements UserService {
     private FollowUserRepository followUserRepository;
 
     @Autowired
-    private EmailOptionsService emailOptionsService;
+    private MailSenderManager mailSenderManager;
+    @Autowired
+    private EmailContentOptionRepository emailContentOptionRepository;
+    @Autowired
+    private EmailOptionService emailOptionService;
 
     @Override
     public Optional<User> findById(Long id) {
@@ -101,10 +112,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ServiceResponse<User> createNewUser(SignupRequest signUpRequest) {
+    public ServiceResponse<User> createNewUser(SignupRequest request) {
         ServiceResponse<User> response = new ServiceResponse<>();
         try {
-            List<String> errorMessages = validateUser(signUpRequest);
+            List<String> errorMessages = validateUser(request);
             if (!errorMessages.isEmpty()) {
                 String err = "Error: User not created. %s".formatted(errorMessages);
                 logger.error(err);
@@ -113,11 +124,11 @@ public class UserServiceImpl implements UserService {
                 return response;
             }
             // Create new user's account
-            User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(),
-                    encoder.encode(signUpRequest.getPassword()), // encode the password before saving it in the database
+            User user = new User(request.getUsername(), request.getEmail(),
+                    encoder.encode(request.getPassword()),
                     AuthProvider.local);
 
-            Set<String> strRoles = signUpRequest.getRoles();
+            Set<String> strRoles = request.getRoles();
             Set<Role> roles = getRolesByString(strRoles);
             user.setRoles(roles);
             user.setCreatedBy(user.getUsername());
@@ -130,6 +141,10 @@ public class UserServiceImpl implements UserService {
             user.setStat(userStat);
 
             userRepository.save(user);
+            EmailContentOption contentOption = emailOptionService.getEmailOptionByType(EmailOptionType.REGISTRATION_CONFIRMATION);
+            ResourceUtil.ResourcePartObject partObject = new ResourceUtil.ResourcePartObject(user.getUsername(), user.getEmail(), null, null);
+            String msg = ResourceUtil.buildEmailContentFromTemplate(contentOption.getEmailBodyTemplate(), partObject);
+            mailSenderManager.sendEmail(request.getEmail(), "Reddot account confirmation", msg, true);
             response.setDataObject(user);
 
         } catch (Exception e) {
@@ -141,11 +156,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean createOAuthUser(User user) {
+        try {
+            // generate 10 character uuid
+            String plainPw = "@Pss" + UUID.randomUUID().toString().substring(0, 10);
+            user.setPassword(createEncodedPassword(plainPw));
+            Person person = new Person();
+            person.setCreatedBy(user.getUsername());
+            user.setPerson(person);
+            UserStat userStat = new UserStat();
+            userStat.setCreatedBy(user.getUsername());
+            user.setStat(userStat);
+            roleRepository.findByName(RoleName.ROLE_USER).ifPresent(role -> user.setRoles(new HashSet<>(Set.of(role))));
+            userRepository.save(user);
+
+            EmailContentOption contentOption = emailContentOptionRepository.findByOptionType(EmailOptionType.REGISTRATION_WITH_OAUTH_NOTIFICATION);
+            ResourceUtil.ResourcePartObject partObject = new ResourceUtil.ResourcePartObject(user.getUsername(), user.getEmail(), plainPw, null);
+            String msg = ResourceUtil.buildEmailContentFromTemplate(contentOption.getEmailBodyTemplate(), partObject);
+            mailSenderManager.sendEmail(user.getEmail(), contentOption.getEmailSubject(), msg, true);
+            return true;
+        } catch (Exception e) {
+            logger.error("Error occurred while creating OAuth user: %s".formatted(e.getMessage()));
+            return false;
+        }
+    }
+
+    private @NotBlank @Size(min = 6, max = 100) String createEncodedPassword(String plainPw) {
+        return encoder.encode(plainPw);
+    }
+
+    @Override
     @Transactional(readOnly = false)
     public ServiceResponse<Void> deleteUser(User user) {
 
         ServiceResponse<Void> response = new ServiceResponse<>();
-
         DeletedUser deletedUser = DeletedUser.fromUser(user);
 
         // clear up relationships before deleting
@@ -166,7 +210,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional()
     public ServiceResponse<User> updateStatusUser(Long id, String status) {
         ServiceResponse<User> response = new ServiceResponse<>();
         User user = userRepository.findById(id).orElse(null);
@@ -192,7 +236,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional()
     public ServiceResponse<User> updateRoleUser(UpdateRoleRequest updateRoleRequest) {
         ServiceResponse<User> response = new ServiceResponse<>();
         User user = userRepository.findById(updateRoleRequest.getUserId()).orElse(null);
@@ -266,17 +310,17 @@ public class UserServiceImpl implements UserService {
         return messages;
     }
 
-    @Transactional(readOnly = false)
-    public ServiceResponse<Void> passwordReset(PasswordReset passwordReset, String newPassword) {
+    @Transactional()
+    public ServiceResponse<Void> passwordReset(RecoveryToken recoveryToken, String newPassword) {
         ServiceResponse<Void> response = new ServiceResponse<>();
-        User user = userRepository.findByEmail(passwordReset.getEmail()).orElse(null);
+        User user = userRepository.findByEmail(recoveryToken.getEmail()).orElse(null);
         if (user != null && !"".equals(newPassword)) {
             user.setPassword(encoder.encode(newPassword));
             userRepository.save(user);
-            passwordResetRepository.delete(passwordReset);
+            recoveryTokenRepository.delete(recoveryToken);
         } else {
             response.setAckCode(AckCodeType.FAILURE);
-            response.addMessage(String.format("Unable to locate user with email %s", passwordReset.getEmail()));
+            response.addMessage(String.format("Unable to locate user with email %s", recoveryToken.getEmail()));
         }
         return response;
     }
@@ -319,7 +363,6 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(encoder.encode(newPasswordRequest.getNewPassword()));
         userRepository.save(user);
-        emailOptionsService.sendNotificationChangePassword(user.getUsername(), user.getEmail());
         return response;
     }
 

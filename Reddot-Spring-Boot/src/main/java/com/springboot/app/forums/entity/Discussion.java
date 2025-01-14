@@ -4,21 +4,19 @@ import com.springboot.app.model.BaseEntity;
 import com.springboot.app.tags.Tag;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "discussions")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Discussion extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "title", length = 100, unique = true, nullable = false)
     private String title;
     @Column(name = "closed")
@@ -39,17 +37,4 @@ public class Discussion extends BaseEntity {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "discussion_tags", joinColumns = @JoinColumn(name = "discussion_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private List<Tag> tags;
-
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setCreatedAt(now);
-        this.setUpdatedAt(now);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setUpdatedAt(now);
-    }
 }

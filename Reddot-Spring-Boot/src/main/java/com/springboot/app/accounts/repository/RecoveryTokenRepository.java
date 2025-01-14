@@ -1,6 +1,6 @@
 package com.springboot.app.accounts.repository;
 
-import com.springboot.app.accounts.entity.PasswordReset;
+import com.springboot.app.accounts.entity.RecoveryToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,18 +11,16 @@ import java.util.Date;
 import java.util.Optional;
 
 @Repository
-public interface PasswordResetRepository extends JpaRepository<PasswordReset, Long> {
+public interface RecoveryTokenRepository extends JpaRepository<RecoveryToken, Long> {
     @Modifying
-    @Query("DELETE FROM PasswordReset pr WHERE pr.createdAt < :thresholdDate")
+    @Query("DELETE FROM RecoveryToken rt WHERE rt.createdAt < :thresholdDate")
     Integer deleteLessThan(@Param("thresholdDate") Date thresholdDate);
 
     @Modifying
-    @Query("Select count(pr) FROM PasswordReset pr WHERE pr.email = :email")
+    @Query("Select count(rt) FROM RecoveryToken rt WHERE rt.email = :email")
     Integer countEntities(@Param("email") String email);
 
     Boolean existsByEmail(String email);
 
-    Optional<PasswordReset> findByResetKey(String resetKey);
-
-
+    Optional<RecoveryToken> findByResetKey(String resetKey);
 }
