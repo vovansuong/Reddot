@@ -4,10 +4,9 @@ import com.springboot.app.accounts.entity.AvatarOption;
 import com.springboot.app.dto.response.AckCodeType;
 import com.springboot.app.dto.response.ServiceResponse;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,27 +22,20 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class FileService {
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
-
     private static final String DEFAULT_FILE_UPLOAD_DIRECTORY = System.getProperty("user.home")
                                                                 + File.separator + "TechForum" + File.separator + "files";
-
     private static final String DEFAULT_AVATAR_FOLDER_PATH = "avatars";
-
     private static final String DEFAULT_COMMENT_THUMBNAIL_FOLDER_PATH =
             "comment" + File.separator + "thumbnails";
-
     private static final String DEFAULT_COMMENT_ATTACHMENT_FOLDER_PATH =
             "comment" + File.separator + "attachments";
-
     private static final String DEFAULT_MESSAGE_ATTACHMENT_FOLDER_PATH =
             "comment" + File.separator + "attachments";
-
     /* timestamp pattern used to generated unique file name for new file uploaded */
     private static final String TIMESTAMP_PATTERN = "yyyyMMdd.HHmmss.SSS";
-
     @Value("${File.uploadDirectory:undefined}")
     private String fileUploadDirectory;
 
@@ -81,10 +73,9 @@ public class FileService {
     @Autowired
     private SystemConfigService systemConfigService;
 
-
     @PostConstruct
     public void init() {
-        logger.info("FileService initialized");
+        log.info("FileService initialized");
         if ("undefined".equals(fileUploadDirectory)) {
             fileUploadDirectory = DEFAULT_FILE_UPLOAD_DIRECTORY;
         }
@@ -163,18 +154,17 @@ public class FileService {
             }
 
             ImageIO.write(bufferedImage, avatarImageType, avatarFile);
-            logger.info("Successfully uploaded avatar: " + fileName);
+            log.info("Successfully uploaded avatar: " + fileName);
 
             response.setDataObject(fileName);
         } catch (Exception e) {
-            logger.error("Error uploading avatar", e);
+            log.error("Error uploading avatar", e);
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Error uploading avatar");
         }
 
         return response;
     }
-
 
     public ServiceResponse<String> uploadAvatar(InputStream inputStream, long size, String username) {
         ServiceResponse<String> response = new ServiceResponse<>();
@@ -203,11 +193,11 @@ public class FileService {
             }
 
             ImageIO.write(bufferedImage, avatarImageType, avatarFile);
-            logger.info("Successfully uploaded avatar: " + fileName);
+            log.info("Successfully uploaded avatar: " + fileName);
 
             response.setDataObject(fileName);
         } catch (Exception e) {
-            logger.error("Error uploading avatar", e);
+            log.error("Error uploading avatar", e);
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Error uploading avatar");
         } finally {
@@ -260,10 +250,10 @@ public class FileService {
                 return response;
             }
             ImageIO.write(bufferedImage, extension, thumbnailFile);
-            logger.info("Successfully uploaded comment thumbnail: " + fileName);
+            log.info("Successfully uploaded comment thumbnail: " + fileName);
             response.setDataObject(fileName);
         } catch (Exception e) {
-            logger.error("Error uploading comment thumbnail", e);
+            log.error("Error uploading comment thumbnail", e);
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Error uploading comment thumbnail");
         } finally {
@@ -309,10 +299,10 @@ public class FileService {
         File attachmentFile = commentAttachmentPath.resolve(fileName).toFile();
         try {
             FileUtils.writeByteArrayToFile(attachmentFile, bytes);
-            logger.info("Successfully uploaded comment attachment: " + fileName);
+            log.info("Successfully uploaded comment attachment: " + fileName);
             response.setDataObject(fileName);
         } catch (Exception e) {
-            logger.error("Error uploading comment attachment", e);
+            log.error("Error uploading comment attachment", e);
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Error uploading comment attachment");
         }
@@ -362,10 +352,10 @@ public class FileService {
         File attachmentFile = messageAttachmentPath.resolve(fileName).toFile();
         try {
             FileUtils.writeByteArrayToFile(attachmentFile, bytes);
-            logger.info("Successfully uploaded message attachment: " + fileName);
+            log.info("Successfully uploaded message attachment: " + fileName);
             response.setDataObject(fileName);
         } catch (Exception e) {
-            logger.error("Error uploading message attachment", e);
+            log.error("Error uploading message attachment", e);
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Error uploading message attachment");
         }
@@ -403,7 +393,7 @@ public class FileService {
 
 
     private String createFileName(String extension) {
-        String timestamp = dateFormat.format(LocalDateTime.now()) + "." + UUID.randomUUID().toString();
+        String timestamp = dateFormat.format(LocalDateTime.now()) + "." + UUID.randomUUID();
         return timestamp + "." + extension;
     }
 

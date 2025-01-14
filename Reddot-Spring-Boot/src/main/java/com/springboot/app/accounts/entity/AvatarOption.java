@@ -1,31 +1,21 @@
 package com.springboot.app.accounts.entity;
 
 import com.springboot.app.model.BaseEntity;
-import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
-
-@Data
 @Entity
+@Setter
+@Getter
 @Table(name = "avatar_option")
 public class AvatarOption extends BaseEntity {
-    @Id
-    private Long id;
     @Column(name = "max_file_size")
     private int maxFileSize;
     @Column(name = "max_width")
     private int maxWidth;
     @Column(name = "max_height")
     private int maxHeight;
-
-    @PrePersist
-    public void prePersist() {
-        this.setCreatedAt(LocalDateTime.now());
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.setUpdatedAt(LocalDateTime.now());
-    }
 }

@@ -48,7 +48,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Beginner User
         Badge badgeBeginner = new Badge();
-        badgeBeginner.setId(1L);
         badgeBeginner.setName("Beginner User");
         badgeBeginner.setDescription("This title will appear when you create an account");
         badgeBeginner.setIcon("fa-solid fa-shield-cat");
@@ -66,7 +65,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Trainee
         Badge badgeTrainee = new Badge();
-        badgeTrainee.setId(2L);
         badgeTrainee.setName("Trainee");
         badgeTrainee.setDescription("This badge is worth 30 POINTS / "
                                     + "Users need to complete the request: contribute to any discussion with AT LEAST 2 POSTS and 2 COMMENT");
@@ -85,7 +83,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Bronze User
         Badge badgeBronze = new Badge();
-        badgeBronze.setId(3L);
         badgeBronze.setName("Bronze User");
         badgeBronze.setDescription("This badge is worth 100 POINTS / "
                                    + "Users need to complete the request: made more than 10 POSTS and AT LEAST 1 COMMENT to get it.");
@@ -104,7 +101,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Silver User
         Badge badgeSilver = new Badge();
-        badgeSilver.setId(4L);
         badgeSilver.setName("Silver User");
         badgeSilver.setDescription("This badge is worth 500 POINTS / "
                                    + "Users need to complete the request: posted over 100 POSTS/COMMENTS to get it.");
@@ -123,7 +119,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Gold User
         Badge badgeGold = new Badge();
-        badgeGold.setId(5L);
         badgeGold.setName("Gold User");
         badgeGold.setDescription("This badge is worth 800 POINTS / "
                                  + "Users need to complete the request: posted over 500 POSTS/COMMENTS to get it.");
@@ -143,7 +138,6 @@ public class BadgeServiceImpl implements BadgeService {
         ServiceResponse<Void> response = new ServiceResponse<>();
         // add badge Platinum User
         Badge badgePlatinum = new Badge();
-        badgePlatinum.setId(6L);
         badgePlatinum.setName("Platinum User");
         badgePlatinum.setDescription("This badge is worth 1,000 POINTS / "
                                      + "Users need to complete the request: posted over 1,000 POSTS/COMMENTS to get it.");

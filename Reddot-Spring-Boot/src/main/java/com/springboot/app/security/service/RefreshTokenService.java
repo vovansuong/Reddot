@@ -4,15 +4,13 @@ import com.springboot.app.accounts.entity.User;
 import com.springboot.app.accounts.repository.UserRepository;
 import com.springboot.app.dto.response.AckCodeType;
 import com.springboot.app.dto.response.ServiceResponse;
+import com.springboot.app.exception.ResourceNotFoundException;
 import com.springboot.app.security.entity.RefreshToken;
-import com.springboot.app.security.exception.ResourceNotFoundException;
 import com.springboot.app.security.exception.TokenRefreshException;
 import com.springboot.app.security.repository.RefreshTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +25,10 @@ public class RefreshTokenService {
 
     private static final int MAX_TOKENS = 3;
     private static final Logger log = LoggerFactory.getLogger(RefreshTokenService.class);
-    @Value("${springboot.app.jwtRefreshExpirationMs}")
-    private Long refreshTokenDurationMs;
-
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
+    @Value("${springboot.app.jwtRefreshExpirationMs}")
+    private Long refreshTokenDurationMs;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
@@ -44,7 +41,7 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshToken(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
         if (user != null) {
             return generateRefreshTokenByUser(user);
         }
@@ -53,7 +50,7 @@ public class RefreshTokenService {
 
     public RefreshToken createRefreshTokenByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email " + email));
         if (user != null) {
             return generateRefreshTokenByUser(user);
         }
@@ -100,21 +97,20 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public ServiceResponse<Void> deleteByToken(String token, Long userId) {
+    public void deleteByToken(String token, Long userId) {
         ServiceResponse<Void> response = new ServiceResponse<>();
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token).orElse(null);
         if (refreshToken == null) {
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Token not found");
-            return response;
+            return;
         }
         if (!Objects.equals(refreshToken.getUser().getId(), userId)) {
             response.setAckCode(AckCodeType.FAILURE);
             response.addMessage("Token not found for this user");
-            return response;
+            return;
         }
         refreshTokenRepository.delete(refreshToken);
-        return response;
     }
 
 }

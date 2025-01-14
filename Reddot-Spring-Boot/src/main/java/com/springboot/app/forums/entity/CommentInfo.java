@@ -1,22 +1,23 @@
 package com.springboot.app.forums.entity;
 
 import com.springboot.app.model.BaseEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comment_info")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentInfo extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "title", length = 255)
     private String title;
     @Column(name = "content_abbr", length = 255)
@@ -28,17 +29,4 @@ public class CommentInfo extends BaseEntity {
     @Column(name = "comment_date", columnDefinition = "DATETIME")
     // columnDefinition = "DATETIME" is added to fix the error "Table 'discussions.comment_info' doesn't exist
     private LocalDateTime commentDate;
-
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setCreatedAt(now);
-        this.setUpdatedAt(now);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setUpdatedAt(now);
-    }
 }

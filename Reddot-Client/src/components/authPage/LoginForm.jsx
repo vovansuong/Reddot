@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { loginUser } from "../../redux/apiRequest";
@@ -78,16 +78,6 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (currentUser?.accessToken && currentUser?.roles?.length > 0) {
-      // const pathname = location?.state?.from?.pathname;
-      // if (
-      // 	pathname === "/unauthorized" ||
-      // 	pathname === "/login" ||
-      // 	pathname === "/register"
-      // ) {
-      // 	navigate("/");
-      // } else {
-      // 	navigate(pathname);
-      // }
       navigate("/");
     }
   }, [currentUser, error, navigate]);

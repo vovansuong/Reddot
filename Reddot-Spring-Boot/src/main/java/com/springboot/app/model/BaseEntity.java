@@ -1,76 +1,59 @@
 package com.springboot.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+@Setter
+@Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @Column(name = "created_at", columnDefinition = "DATETIME")
+    @Transient
+    @EqualsAndHashCode.Include
+    @JsonIgnore
+    // this is a temporary key used for the equals and hashcode methods
+    private final String temporaryKey = UUID.randomUUID().toString();
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "created_by", nullable = true, length = 50)
+    @Column(name = "created_by")
     private String createdBy;
 
-    @Column(name = "updated_at", columnDefinition = "DATETIME")
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "updated_by", nullable = true, length = 50)
+    @Column(name = "updated_by")
     private String updatedBy;
+    @Transient
+    private boolean isNew = true;
 
-    public abstract Long getId();
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    @PostLoad
+    void markNotNew() {
+        this.isNew = false;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    @PrePersist
+    public void prePersist() {
+        this.isNew = false;
+        LocalDateTime now = LocalDateTime.now();
+        this.setCreatedAt(now);
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getId() == null) ? super.hashCode() : getId().hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        BaseEntity other = (BaseEntity) obj;
-        return this.getId().equals(other.getId());
+    @PreUpdate
+    public void preUpdate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.setUpdatedAt(now);
     }
 }

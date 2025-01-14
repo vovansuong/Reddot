@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("forumRepository")
+@Repository
 public interface ForumRepository extends JpaRepository<Forum, Long> {
     @Query("SELECT f FROM Forum f WHERE f.forumGroup.id = :id")
     List<Forum> findForumByForumGroupId(@Param("id") Long id);

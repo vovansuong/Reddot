@@ -2,9 +2,16 @@ package com.springboot.app.accounts.entity;
 
 import com.springboot.app.accounts.enumeration.RoleName;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
+@Setter
+@Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "roles")
 public class Role {
     @Id
@@ -12,30 +19,10 @@ public class Role {
     private int id;
     @Enumerated(EnumType.STRING)
     @NaturalId
-    @Column(length = 60)
+    @NonNull
     private RoleName name;
 
-    public Role() {
-    }
-
-    public Role(int id, RoleName name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public RoleName getName() {
-        return name;
-    }
-
-    public void setName(RoleName name) {
+    public Role(@NonNull RoleName name) {
         this.name = name;
     }
 }

@@ -4,21 +4,18 @@ import com.springboot.app.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "forums")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Forum extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "title", length = 100, unique = true)
     private String title;
     @Column(name = "description", length = 200)
@@ -40,17 +37,4 @@ public class Forum extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "forum_stat_id", foreignKey = @ForeignKey(name = "FK_FORUM_FORUM_STAT"))
     private ForumStat stat;
-
-    @PrePersist
-    public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setCreatedAt(now);
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.setUpdatedAt(now);
-    }
-
 }

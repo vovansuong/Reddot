@@ -1,27 +1,15 @@
-package com.springboot.app.emails.dto.request;
+package com.springboot.app.email.dto.request;
 
-import java.util.Set;
-
-public class DataEmailRequest {
-    private Set<String> emails;
+public class RegistationEmailRequest {
     private String subject;
     private String template;
 
-    public DataEmailRequest() {
+    public RegistationEmailRequest() {
     }
 
-    public DataEmailRequest(Set<String> emails, String subject, String template) {
-        this.emails = emails;
+    public RegistationEmailRequest(String subject, String template) {
         this.subject = subject;
         this.template = template;
-    }
-
-    public Set<String> getEmails() {
-        return emails;
-    }
-
-    public void setEmails(Set<String> email) {
-        this.emails = email;
     }
 
     public String getSubject() {
@@ -39,5 +27,4 @@ public class DataEmailRequest {
     public void setTemplate(String template) {
         this.template = template;
     }
-
 }

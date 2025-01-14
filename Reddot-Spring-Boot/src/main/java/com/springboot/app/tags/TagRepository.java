@@ -21,4 +21,5 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
     //count tag by disabled
     Long countByDisabled(Boolean disabled);
 
+    boolean existsByLabel(String label);
 }

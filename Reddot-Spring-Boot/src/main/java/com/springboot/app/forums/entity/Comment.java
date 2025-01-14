@@ -6,8 +6,9 @@ import com.springboot.app.follows.entity.Bookmark;
 import com.springboot.app.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +18,11 @@ import java.util.List;
         property = "id")
 @Entity
 @Table(name = "comments")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "title", length = 255)
     private String title;
     @Lob
@@ -49,17 +48,4 @@ public class Comment extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<Bookmark> bookmarks = new ArrayList<>();
-
-    @PrePersist
-    public void prePersist() {
-        this.setCreatedAt(java.time.LocalDateTime.now());
-        this.setUpdatedAt(java.time.LocalDateTime.now());
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.setUpdatedAt(java.time.LocalDateTime.now());
-    }
-
-
 }

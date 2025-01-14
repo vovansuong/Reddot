@@ -105,14 +105,12 @@ public class VoteServiceImpl implements VoteService {
         return vote.orElse(null);
     }
 
-    @Transactional(readOnly = false)
     public ServiceResponse<Map<String, Long>> getReputation4AllUsers() {
         ServiceResponse<Map<String, Long>> response = new ServiceResponse<>();
         response.setDataObject(voteDAO.getReputation4AllUsers());
         return response;
     }
 
-    @Transactional(readOnly = false)
     public ServiceResponse<Map<String, Integer>> getMostReputationUsers(LocalDateTime sinceDate, Integer limit) {
         ServiceResponse<Map<String, Integer>> response = new ServiceResponse<>();
         response.setDataObject(voteDAO.getTopReputationUsers(sinceDate, limit));
@@ -123,7 +121,7 @@ public class VoteServiceImpl implements VoteService {
     public void addReputationAfterVote(Comment comment, int voteValue) {
         String username = comment.getCreatedBy();
         UserStat stat = statDAO.getUserStat(username);
-        stat.addReputation(voteValue);
+        stat.setReputation(voteValue);
         userStatRepository.save(stat);
     }
 }

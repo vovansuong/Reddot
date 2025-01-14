@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("discussionRepository")
+@Repository
 public interface DiscussionRepository extends JpaRepository<Discussion, Long> {
     @Modifying
     @Query("UPDATE Discussion d SET d.forum = :toForum WHERE d.forum = :fromForum")
@@ -35,5 +35,4 @@ public interface DiscussionRepository extends JpaRepository<Discussion, Long> {
 
     @Query("SELECT d FROM Discussion d WHERE (:title IS NULL OR :title = '' OR d.title LIKE %:title%)")
     List<Discussion> searchDiscussionByTitle(@Param("title") String title);
-
 }

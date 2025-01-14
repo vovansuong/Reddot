@@ -14,6 +14,8 @@ import java.util.Optional;
 @Component
 public interface UserService {
 
+    boolean createOAuthUser(User user);
+
     Optional<User> findById(Long id);
 
     Optional<User> findByUsername(String username);
