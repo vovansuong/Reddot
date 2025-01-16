@@ -1,0 +1,1 @@
+ /Users/nguyentrongtoan/PROJECT/PROJECT_SEM4_REDDOT/Reddot/reddot_mobile/.dart_tool/flutter_build/2a28fac33d5a9d039301cf96bc47798f/native_assets.yaml: 
