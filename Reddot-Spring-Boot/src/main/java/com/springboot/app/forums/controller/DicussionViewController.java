@@ -41,7 +41,7 @@ public class DicussionViewController {
         return ResponseEntity.ok(new ObjectResponse("404", "Discussion not found", null));
     }
 
-    @GetMapping("/byFourm/{id}")
+    @GetMapping("/byForum/{id}")
     public ResponseEntity<ObjectResponse> getDiscussionsByForum(Long id) {
         ServiceResponse<List<DiscussionDTO>> response = discussionService.getDiscussionsByForum(id);
         if (response.getDataObject() != null && !response.getDataObject().isEmpty()) {

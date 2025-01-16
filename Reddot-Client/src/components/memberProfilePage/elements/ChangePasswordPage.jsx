@@ -155,11 +155,14 @@ const ChangePassword = () => {
             id="email"
             placeholder="Enter old password (*)"
             value={oldPwd}
-            onChange={(e) => setOldPwd(e.target.value)}
+            onChange={(e) => {
+              setOldPwd(e.target.value)
+              setOldPwdFocus(true)
+            }
+            } 
             required
             aria-invalid={!oldValidPwd}
             aria-describedby="email-err"
-            onFocus={() => setOldPwdFocus(true)}
             onBlur={() => setOldPwdFocus(false)}
             valid={+(oldPwd.length === 0 || oldValidPwd)}
           />
@@ -199,11 +202,14 @@ const ChangePassword = () => {
             id="password"
             placeholder="Enter new password (*)"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setPwdFocus(true)
+            }
+            }
             required
             aria-invalid={!validPwd}
             aria-describedby="password-err"
-            onFocus={() => setPwdFocus(true)}
             onBlur={() => setPwdFocus(false)}
             valid={+(password.length === 0 || validPwd)}
           />
@@ -243,12 +249,15 @@ const ChangePassword = () => {
             id="confirm"
             placeholder="Confirm new password (*)"
             value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            onChange={(e) => {
+              setConfirm(e.target.value)
+              setConfirmFocus(true) 
+            }
+            }
             onKeyDown={(e) => handleKeyDown(e)}
             required
             aria-invalid={!validConfirm}
             aria-describedby="confirm-err"
-            onFocus={() => setConfirmFocus(true)}
             onBlur={() => setConfirmFocus(false)}
             valid={+(confirm.length === 0 || validConfirm)}
           />

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { loginUser } from "../../redux/apiRequest";
-import FormInput from "../formInput/FormInput";
+import FormInput from "../FormInput";
 import { validatePassword, validateNameOrEmail } from "../../utils/validUtils";
 
 import SocialLogin from "./SocialLogin";

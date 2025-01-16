@@ -1,6 +1,4 @@
-import PropTypes from "prop-types";
 import styled from "styled-components";
-import { useEffect } from "react";
 
 const StyledInput = styled.input((props) => ({
   color: props.valid ? "green" : "red",
@@ -10,10 +8,12 @@ const StyledInput = styled.input((props) => ({
 }));
 
 import { errorPasswordItem } from "../../utils/validUtils";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 
-const FormInput = ({
+export default function FormInput  ({
   id,
-  type,
+  type = "text",
   value,
   valid,
   focus,
@@ -23,7 +23,7 @@ const FormInput = ({
   placeholder,
   errorMsg,
   handleKeyDown,
-}) => {
+}) {
   const showErrMsg = () => {
     let errors = [];
     if (id !== "password") {
@@ -102,5 +102,3 @@ FormInput.propTypes = {
   errorMsg: PropTypes.string.isRequired,
   handleKeyDown: PropTypes.func,
 };
-
-export default FormInput;

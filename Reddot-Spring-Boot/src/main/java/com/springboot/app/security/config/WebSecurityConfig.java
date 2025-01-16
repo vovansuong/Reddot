@@ -10,6 +10,8 @@ import com.springboot.app.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -23,6 +25,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableMethodSecurity
@@ -82,8 +88,27 @@ public class WebSecurityConfig {
                         auth.requestMatchers("/", "/error", "/api/auth/**").permitAll()
                                 .requestMatchers("/api/reset-password/**").permitAll()
                                 .requestMatchers("/api/user-stat/**", "/api/view/**").permitAll()
-                                .requestMatchers("/api/mobiles/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/discussions/*", "/api/discussions/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/comments/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/banned-keywords/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/account-info/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/follow/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/user-history/comments").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/follows/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/discussions/*", "/api/discussions/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/comments/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/banned-keywords/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/account-info/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/follow/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/user-history/comments").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/follows/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
+                                // by role
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                // by role
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 // OpenAPI endpoints
                                 .requestMatchers("/v3/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
@@ -118,4 +143,19 @@ public class WebSecurityConfig {
         return http.build();
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**") // Allow all endpoints
+                        .allowedOrigins("http://127.0.0.1:8080", "http://10.0.2.2:8080") // Add Flutter's localhost
+                        // add ReactJS's localhost
+                        .allowedOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:5173", "http://localhost:5174")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific methods
+                        .allowedHeaders("*") // Allow all headers
+                        .allowCredentials(true); // Allow cookies or authorization headers
+            }
+        };
+    }
 }

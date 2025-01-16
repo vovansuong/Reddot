@@ -11,7 +11,7 @@ import {
 } from "../../../../utils/validUtils";
 
 import "./style.scss";
-import FormInput from "../../../formInput/FormInput";
+import FormInput from "../../../FormInput";
 
 const convertRoleToArray = (role) => {
   const roles = [];
