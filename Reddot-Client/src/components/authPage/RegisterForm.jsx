@@ -11,7 +11,7 @@ import {
   validatePassword,
   validateConfirm,
 } from "../../utils/validUtils";
-import FormInput from "../formInput/FormInput";
+import FormInput from "../FormInput";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();

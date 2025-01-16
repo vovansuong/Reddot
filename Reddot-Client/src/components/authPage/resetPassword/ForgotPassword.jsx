@@ -63,11 +63,14 @@ const ForgotPassword = () => {
         id="emailRP"
         placeholder="Email address (*)"
         value={emailRP}
-        onChange={(e) => setEmailRP(e.target.value)}
+        onChange={(e) => {
+setEmailRP(e.target.value)
+        setEmailRPFocus(true)
+        }
+        }
         required
         aria-invalid={!validEmailRP}
         aria-describedby="emailRP-err"
-        onFocus={() => setEmailRPFocus(true)}
         onBlur={() => setEmailRPFocus(false)}
         valid={+(emailRP.length === 0 || validEmailRP)}
       />

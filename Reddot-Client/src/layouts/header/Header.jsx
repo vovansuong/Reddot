@@ -38,10 +38,7 @@ function Header() {
     logOut(dispatch, id, navigate, accessToken, axiosJWT);
   };
   const [isOpen, setIsOpen] = React.useState(false);
-  // const [dropdownOpen, setDropdownOpen] = React.useState(false);
-
   const [dropdownOpenAccount, setDropdownOpenAccount] = React.useState(false);
-
   const [color, setColor] = React.useState("transparent");
   const sidebarToggle = React.useRef();
   const location = useLocation();
@@ -54,11 +51,6 @@ function Header() {
     }
     setIsOpen(!isOpen);
   };
-
-  // const dropdownToggle = (e) => {
-  // 	e.preventDefault();
-  // 	setDropdownOpen(!dropdownOpen);
-  // };
 
   const dropdownToggleAccount = (e) => {
     e.preventDefault();

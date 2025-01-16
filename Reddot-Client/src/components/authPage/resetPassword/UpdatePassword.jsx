@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "react-toastify";
 
 import { validatePassword, validateConfirm } from "../../../utils/validUtils";
-import FormInput from "../../formInput/FormInput";
+import FormInput from "../../FormInput";
 import { resetPassword } from "../../../redux/apiRequest";
 import { getUrlParameter } from "../../../utils/Helper";
 

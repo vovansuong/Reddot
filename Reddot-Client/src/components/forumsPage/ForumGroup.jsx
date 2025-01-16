@@ -7,7 +7,6 @@ import _ from "lodash";
 //Service
 import { getAllForumGroup } from "../../services/forumService/ForumGroupService";
 import { getAllForum } from "../../services/forumService/ForumService";
-import { getForumStat } from "../../services/forumService/ForumService";
 
 //Page
 import ForumInfo from "./ForumInfo";

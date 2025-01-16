@@ -223,9 +223,4 @@ ModalUpdateComment.propTypes = {
   dataUpdateComment: PropTypes.object.isRequired,
   handleEditCommentFromModel: PropTypes.func.isRequired,
 };
-
-ModalUpdateComment.defaultProps = {
-  dataUpdateComment: null, // Provide a default value
-};
-
 export default ModalUpdateComment;

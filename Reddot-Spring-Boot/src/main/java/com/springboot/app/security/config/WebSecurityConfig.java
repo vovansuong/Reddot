@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -24,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -93,7 +96,17 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/mobile/follow/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/user-history/comments").permitAll()
                                 .requestMatchers(HttpMethod.GET, "api/follows/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/discussions/*", "/api/discussions/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/comments/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/banned-keywords/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/account-info/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/mobile/follow/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/user-history/comments").permitAll()
+                                .requestMatchers(HttpMethod.GET, "api/follows/**").permitAll()
                                 .requestMatchers("/api/test/**").permitAll()
+                                // by role
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 // by role
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 // OpenAPI endpoints
