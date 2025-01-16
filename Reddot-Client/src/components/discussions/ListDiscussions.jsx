@@ -70,7 +70,7 @@ const ListDiscussions = () => {
       orderBy,
       sort,
       search,
-      forumId,
+      forumId
     );
     if (res && res.data) {
       setDiscussionList(res.data);
@@ -238,33 +238,34 @@ const ListDiscussions = () => {
               </tr>
             </thead>
             <tbody>
-              {discussionList.map((discussion) => (
-                <tr key={discussion.id}>
-                  <td>
-                    <Link
-                      to={`/discussion/${discussion.id}`}
-                      style={{ color: "blue", textDecoration: "none" }}
-                    >
-                      {" "}
-                      {discussion.title}
-                    </Link>
-                    <br />
-                    <span>
-                      Started by <b>{discussion.createdBy}</b> about{" "}
-                      {discussion.createdAt
-                        ? formatDifferentUpToNow(discussion.createdAt)
-                        : ""}
-                    </span>
-                  </td>
-                  <td className="text-center">
-                    {discussion.stat?.commentCount}
-                  </td>
-                  <td>{formatDate(discussion.createdAt)}</td>
-                  <td>
-                    <LastCommentInfo id={discussion.id} type="discussion" />
-                  </td>
-                </tr>
-              ))}
+              {discussionList
+                .filter((discussion) => !discussion.closed) // Lọc chỉ hiển thị discussion có closed = false
+                .map((discussion) => (
+                  <tr key={discussion.id}>
+                    <td>
+                      <Link
+                        to={`/discussion/${discussion.id}`}
+                        style={{ color: "blue", textDecoration: "none" }}
+                      >
+                        {discussion.title}
+                      </Link>
+                      <br />
+                      <span>
+                        Started by <b>{discussion.createdBy}</b> about{" "}
+                        {discussion.createdAt
+                          ? formatDifferentUpToNow(discussion.createdAt)
+                          : ""}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      {discussion.stat?.commentCount}
+                    </td>
+                    <td>{formatDate(discussion.createdAt)}</td>
+                    <td>
+                      <LastCommentInfo id={discussion.id} type="discussion" />
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
           <div className="pagination pagination-end">

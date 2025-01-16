@@ -474,14 +474,14 @@ const DiscussionDetails = () => {
                     post at:
                     {comment?.createdAt && formatLongDate(comment?.createdAt)}
                     <div className="d-flex justify-content-start align-items-center">
-                      <div>
+                      {/* <div>
                         <i className="fa-solid fa-star" alt="reputation"></i>
                         {comment?.author?.reputation}{" "}
-                      </div>
-                      <div className="mx-2">
+                      </div> */}
+                      {/* <div className="mx-2">
                         <i className="fa-solid fa-pen"></i>{" "}
                         {comment?.author?.totalDiscussions}
-                      </div>
+                      </div> */}
                       <div style={{ color: comment?.author?.badgeColor }}>
                         <i className={comment?.author?.badgeIcon} />
                         {comment?.author?.badgeName}
@@ -496,12 +496,12 @@ const DiscussionDetails = () => {
                       onClick={() => handleEditDiscussion(comment)}
                       className="mx-2 fa-solid fa-edit fa-2x"
                     ></button>
-                    {comment?.title !== titleDisc.title && (
+                    {/* {comment?.title !== titleDisc.title && (
                       <button
                         className="mx-2 fa-solid fa-xmark fa-2x"
                         onClick={() => handleClickDelete(comment)}
                       ></button>
-                    )}
+                    )} */}
                   </small>
                 )}
               </>
@@ -516,8 +516,8 @@ const DiscussionDetails = () => {
                 dangerouslySetInnerHTML={{ __html: comment?.content }}
               ></div>
             </div>
-
-            {comment?.tags?.map((tag) => (
+            
+            {/* {comment?.tags?.map((tag) => (
               <span key={tag.id}>
                 <button
                   className="btn btn-sm mx-2"
@@ -527,8 +527,10 @@ const DiscussionDetails = () => {
                   <span style={{ color: "white" }}>{tag?.label}</span>
                 </button>
               </span>
-            ))}
+            ))} */}
           </div>
+
+          
           {comment?.replies?.length > 0 && <hr />}
           {comment?.replies?.map((reply, index) => {
             const isLastReply = index === comment?.replies?.length - 1;
@@ -556,11 +558,11 @@ const DiscussionDetails = () => {
           })}
           <hr />
           <div className="card-footer d-flex justify-content-between">
-            <span>
+            {/* <span>
               <button onClick={() => handleReply(comment?.commentId)}>
                 <i className="fa-solid fa-reply"></i>Reply
               </button>
-            </span>
+            </span> */}
 
             <span>
               <small>
@@ -590,6 +592,7 @@ const DiscussionDetails = () => {
               </section>
             )}
             {/* first comment */}
+            <h3>Answer</h3>
 
             {/* list comment */}
             <section>
@@ -682,6 +685,7 @@ const DiscussionDetails = () => {
             <DiscussionInfo discussionInfo={discussionInfo} />
           </Col>
         </Row>
+        
       </Col>
       <ModalAddNewReply
         show={isShowAddNewReply}

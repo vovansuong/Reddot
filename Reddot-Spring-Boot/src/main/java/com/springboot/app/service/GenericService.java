@@ -3,6 +3,7 @@ package com.springboot.app.service;
 import com.springboot.app.dto.response.ServiceResponse;
 import com.springboot.app.repository.GenericDAO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +43,7 @@ public class GenericService {
         return response;
     }
 
+    @Transactional
     public <E> ServiceResponse<E> updateEntity(E entity) {
         ServiceResponse<E> response = new ServiceResponse<>();
         E mergedEntity = genericDAO.merge(entity);

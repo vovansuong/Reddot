@@ -114,3 +114,4 @@ export const replaceBannedWords = (text, bannedWords) => {
   });
   return modifiedText;
 };
+

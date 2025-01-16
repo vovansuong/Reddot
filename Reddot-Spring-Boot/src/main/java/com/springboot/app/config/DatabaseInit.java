@@ -143,13 +143,13 @@ public class DatabaseInit implements CommandLineRunner {
 
     private void createBannedKeyword() {
         BannedKeyword bannedKeyword = new BannedKeyword();
-        bannedKeyword.setKeyword("bad-word");
+        bannedKeyword.setKeyword("bad");
         bannedKeyWordService.saveBannedKeyword(bannedKeyword);
         BannedKeyword bannedKeyword2 = new BannedKeyword();
-        bannedKeyword2.setKeyword("***");
+        bannedKeyword2.setKeyword("fuck");
         bannedKeyWordService.saveBannedKeyword(bannedKeyword2);
         BannedKeyword bannedKeyword3 = new BannedKeyword();
-        bannedKeyword3.setKeyword("impolite-word");
+        bannedKeyword3.setKeyword("impolite");
         bannedKeyWordService.saveBannedKeyword(bannedKeyword3);
     }
 

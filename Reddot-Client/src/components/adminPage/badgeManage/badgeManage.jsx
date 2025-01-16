@@ -68,9 +68,9 @@ const BadgeManage = () => {
       <h1>Badge List</h1>
 
       <div className="">
-        <button className="btn btn-primary" onClick={handleSetBadgeAllUser}>
+        {/* <button className="btn btn-primary" onClick={handleSetBadgeAllUser}>
           Set badge All User
-        </button>
+        </button> */}
         <table className="table table-striped borderless">
           <thead>
             <tr>

@@ -321,14 +321,14 @@ const DiscussionDetails = () => {
                     {comment?.createdAt && formatLongDate(comment?.createdAt)}
                     <button className="fa-solid fa-user-plus"></button>
                     <br />
-                    <i className="fa-solid fa-star" alt="reputation"></i>
+                    {/* <i className="fa-solid fa-star" alt="reputation"></i>
                     {comment?.author?.reputation}{" "}
                     <i className="fa-solid fa-pen"></i>{" "}
-                    {comment?.author?.totalDiscussions}
+                    {comment?.author?.totalDiscussions} */}
                   </small>
                 </span>
 
-                <small className="ml-auto me-0 d-inline-block">
+                {/* <small className="ml-auto me-0 d-inline-block">
                   <button
                     onClick={() => handleEditComment(comment)}
                     className="mx-2 fa-solid fa-edit fa-2x"
@@ -337,7 +337,7 @@ const DiscussionDetails = () => {
                     className="mx-2 fa-solid fa-xmark fa-2x"
                     onClick={() => handleClickDelete(comment)}
                   ></button>
-                </small>
+                </small> */}
               </>
             )}
           </div>
@@ -347,11 +347,11 @@ const DiscussionDetails = () => {
               className="contentByDiscussion"
               dangerouslySetInnerHTML={{ __html: comment?.content }}
             ></div>
-            {comment?.tags?.map((tag) => (
+            {/* {comment?.tags?.map((tag) => (
               <span key={tag.id}>
                 <button className="btn btn-sm mx-2">{tag?.label}</button>
               </span>
-            ))}
+            ))} */}
           </div>
           {comment?.replies?.length > 0 && <hr />}
           {comment?.replies?.map((reply, index) => {
@@ -377,11 +377,11 @@ const DiscussionDetails = () => {
           <hr />
           <div className="card-footer d-flex justify-content-between">
             <span></span>
-            <span>
+            {/* <span>
               <button>
                 <i className="fa-regular fa-flag"></i>Report
               </button>
-            </span>
+            </span> */}
 
             <span>
               <small>
@@ -456,7 +456,7 @@ const DiscussionDetails = () => {
             </span>
           </button>
         </div>
-        <div>
+        {/* <div>
           <button
             onClick={() => setShowModelDeleteDiscussion(true)}
             style={{
@@ -469,7 +469,7 @@ const DiscussionDetails = () => {
             <i className="fa-solid fa-triangle-exclamation"></i> Delete this
             Discussion ?
           </button>
-        </div>
+        </div> */}
       </div>
       <div className="my-3 d-flex justify-content-center align-items-center">
         <label className="mx-2" style={{ fontWeight: "bold" }}>
